@@ -13,9 +13,9 @@
       </div>
       <button type="submit">Login</button>
     </form>
-  </div>
-  <div>
-    <router-link to="/signup"> go to Signup </router-link>
+    <div>
+      <router-link to="/signup">go to Signup </router-link>
+    </div>
   </div>
 </template>
 <script>
