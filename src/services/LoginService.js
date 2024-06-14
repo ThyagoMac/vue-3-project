@@ -1,4 +1,4 @@
-import Validations from "./Validations";
+import SignupValidations from "./SignupValidations";
 
 export default class LoginService {
   constructor(user) {
@@ -7,11 +7,11 @@ export default class LoginService {
 
   checkValidations() {
     let errors = [];
-    if (!Validations.checkEmail(this.user?.email)) {
+    if (!SignupValidations.checkEmail(this.user?.email)) {
       errors["email"] = "Invalid email";
     }
 
-    if (!Validations.minLength(this.user?.password, 3)) {
+    if (!SignupValidations.minLength(this.user?.password, 3)) {
       errors["password"] = "Invalid password. Must be gather than 3";
     }
 

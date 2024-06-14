@@ -1,6 +1,7 @@
 <template>
   <div>
     <h3>Signup Page</h3>
+    <div v-if="error" class="alert-error">{{ error }}</div>
     <form @submit.prevent="goSignup">
       <div>
         <label for="email">Email</label>
@@ -30,6 +31,7 @@ export default {
         password: "",
       },
       errors: [],
+      error: "",
     };
   },
   methods: {
@@ -37,17 +39,25 @@ export default {
       signup: SIGNUP_ACTION,
     }),
     goSignup() {
-      console.log("1");
       const loginService = new LoginService(this.user);
       this.errors = loginService.checkValidations();
 
       if ("email" in this.errors || "password" in this.errors) {
         return false;
       }
-      console.log("2");
+
       //signup regist
-      this.signup(this.user);
-      console.log("3");
+      this.signup(this.user).catch((error) => {
+        if (error.toLowerCase().includes("amail")) {
+          this.errors.email = error;
+          return;
+        }
+        if (error.toLowerCase().includes("aassword")) {
+          this.errors.password = error;
+          return;
+        }
+        this.error = error;
+      });
     },
   },
 };
