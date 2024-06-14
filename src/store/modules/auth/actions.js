@@ -1,5 +1,6 @@
 import Axios from "axios";
 import {
+  /* IS_LOADING_SHOW, */
   SET_USER_TOKEN_DATA_MUTATION,
   SIGNUP_ACTION,
 } from "@/store/storeconstants";
@@ -12,6 +13,9 @@ export default {
       password: payload.password,
       returnSecureToken: true,
     };
+
+    /* context.commit(IS_LOADING_SHOW, true, { root: true }); */
+
     let response = "";
     try {
       response = await Axios.post(
@@ -24,7 +28,9 @@ export default {
       );
 
       throw errorMessage;
-    }
+    } /* finally {
+      context.commit(IS_LOADING_SHOW, false, { root: true });
+    } */
     if (response.status === 200) {
       context.commit(SET_USER_TOKEN_DATA_MUTATION, {
         token: response.data.token,

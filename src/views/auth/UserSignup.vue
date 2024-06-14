@@ -13,15 +13,15 @@
         <input id="password" type="password" v-model.trim="user.password" />
         <div class="error" v-if="errors?.password">{{ errors?.password }}</div>
       </div>
-      <button type="submit">Login</button>
+      <button type="submit">Signup</button>
     </form>
     <router-link to="/login"> go to logis </router-link>
   </div>
 </template>
 <script>
 import LoginService from "@/services/LoginService";
-import { SIGNUP_ACTION } from "@/store/storeconstants";
-import { mapActions } from "vuex";
+import { IS_LOADING_SHOW, SIGNUP_ACTION } from "@/store/storeconstants";
+import { mapActions, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -38,7 +38,8 @@ export default {
     ...mapActions("auth", {
       signup: SIGNUP_ACTION,
     }),
-    goSignup() {
+    ...mapMutations({ isLoading: IS_LOADING_SHOW }),
+    async goSignup() {
       const loginService = new LoginService(this.user);
       this.errors = loginService.checkValidations();
 
@@ -46,18 +47,28 @@ export default {
         return false;
       }
 
+      //loading
+      this.isLoading(true);
       //signup regist
-      this.signup(this.user).catch((error) => {
-        if (error.toLowerCase().includes("amail")) {
+      await this.signup(this.user).catch((error) => {
+        this.isLoading(false);
+        if (
+          !error.toLowerCase().includes("password") &&
+          !error.toLowerCase().includes("email")
+        ) {
+          this.error = error;
+          return;
+        }
+
+        if (error.toLowerCase().includes("email")) {
           this.errors.email = error;
-          return;
         }
-        if (error.toLowerCase().includes("aassword")) {
+        if (error.toLowerCase().includes("password")) {
           this.errors.password = error;
-          return;
         }
-        this.error = error;
       });
+
+      this.isLoading(false);
     },
   },
 };
