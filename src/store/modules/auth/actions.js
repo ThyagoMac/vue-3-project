@@ -4,6 +4,7 @@ import {
   IS_LOADING_SHOW,
   SET_USER_TOKEN_DATA_MUTATION,
   SIGNUP_ACTION,
+  LOGOUT_ACTION,
 } from "@/store/storeconstants";
 import SignupValidations from "@/services/SignupValidations";
 
@@ -41,6 +42,18 @@ export default {
         expiresIn: response.data.expiresIn,
       });
     }
+  },
+
+  [LOGOUT_ACTION](context) {
+    context.commit(SET_USER_TOKEN_DATA_MUTATION, {
+      token: "",
+      email: "",
+      name: "",
+      userId: "",
+      localId: "",
+      refreshToken: "",
+      expiresIn: "",
+    });
   },
 
   async [SIGNUP_ACTION](context, payload) {
