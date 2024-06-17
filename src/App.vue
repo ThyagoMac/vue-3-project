@@ -4,17 +4,20 @@
     <div v-show="isLoading" class="loading-box">
       <LoaderSpin />
     </div>
+    <MyNav />
     <router-view v-show="!isLoading" />
   </div>
 </template>
 
 <script>
 import LoaderSpin from "@/components/icons/LoaderSpin.vue";
+import MyNav from "@/components/nav/MyNav.vue";
 import { mapState } from "vuex";
 export default {
   name: "App",
   components: {
     LoaderSpin,
+    MyNav,
   },
   computed: {
     ...mapState({

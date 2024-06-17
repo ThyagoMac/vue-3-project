@@ -15,8 +15,6 @@
       </div>
       <button type="submit">Signup</button>
     </form>
-    <router-link to="/login"> go to login </router-link>
-    <router-link to="/posts">go to post </router-link>
   </div>
 </template>
 <script>

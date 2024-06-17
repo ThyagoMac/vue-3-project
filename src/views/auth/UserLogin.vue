@@ -16,10 +16,7 @@
       </div>
       <button type="submit">Login</button>
     </form>
-    <div>
-      <router-link to="/signup">go to Signup </router-link>
-      <router-link to="/posts">go to post </router-link>
-    </div>
+    <div></div>
     {{ name }}
   </div>
 </template>

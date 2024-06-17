@@ -4,8 +4,6 @@
     <div v-for="post in posts" :key="post.id">
       <strong>{{ post.title }}: </strong> {{ post.text }}
     </div>
-    <router-link to="/login"> go to login </router-link>
-    <router-link to="/signup">go to Signup </router-link>
   </div>
 </template>
 <script>
