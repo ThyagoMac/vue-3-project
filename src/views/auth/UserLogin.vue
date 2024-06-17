@@ -2,15 +2,16 @@
   <div>
     <h3>Login Page</h3>
     <hr />
-    <form @submit.prevent="login()">
+    <div v-if="pageError" class="alert-error">{{ pageError }}</div>
+    <form @submit.prevent="goLogin()">
       <div>
         <label for="email">Email</label>
-        <input id="email" type="text" v-model="user.email" />
+        <input id="email" type="text" v-model.trim="user.email" />
         <div class="error" v-if="errors?.email">{{ errors?.email }}</div>
       </div>
       <div>
         <label for="pass">Password</label>
-        <input id="pass" type="password" v-model="user.password" />
+        <input id="pass" type="password" v-model.trim="user.password" />
         <div class="error" v-if="errors?.password">{{ errors?.password }}</div>
       </div>
       <button type="submit">Login</button>
@@ -23,7 +24,8 @@
 </template>
 <script>
 import LoginService from "@/services/LoginService";
-import { mapState } from "vuex";
+import { IS_LOADING_SHOW, LOGIN_ACTION } from "@/store/storeconstants";
+import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
   data() {
@@ -32,16 +34,49 @@ export default {
         email: "",
         password: "",
       },
-      errors: [],
+      errors: {},
+      pageError: "",
     };
   },
   methods: {
-    login() {
+    ...mapActions("auth", {
+      login: LOGIN_ACTION,
+    }),
+    ...mapMutations({ isLoading: IS_LOADING_SHOW }),
+
+    async goLogin() {
+      this.errors = {};
+      this.pageError = "";
       const loginService = new LoginService(this.user);
       this.errors = loginService.checkValidations();
-      if (this.errors.length) {
+
+      if ("email" in this.errors || "password" in this.errors) {
         return false;
       }
+
+      //loading
+      this.isLoading(true);
+
+      //login attempt
+      await this.login(this.user).catch((error) => {
+        this.isLoading(false);
+        if (
+          !error.toLowerCase().includes("password") &&
+          !error.toLowerCase().includes("email")
+        ) {
+          this.pageError = error;
+          return;
+        }
+
+        if (error.toLowerCase().includes("email")) {
+          this.errors.email = error;
+        }
+        if (error.toLowerCase().includes("password")) {
+          this.errors.password = error;
+        }
+      });
+
+      this.isLoading(false);
     },
   },
   computed: {

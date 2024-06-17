@@ -1,10 +1,10 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
   <div>
-    <div v-if="isLoading" class="loading-box">
+    <div v-show="isLoading" class="loading-box">
       <LoaderSpin />
     </div>
-    <router-view v-else />
+    <router-view v-show="!isLoading" />
   </div>
 </template>
 

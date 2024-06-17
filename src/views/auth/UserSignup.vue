@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>Signup Page</h3>
-    <div v-if="error" class="alert-error">{{ error }}</div>
+    <div v-if="pageError" class="alert-error">{{ pageError }}</div>
     <form @submit.prevent="goSignup">
       <div>
         <label for="email">Email</label>
@@ -20,8 +20,8 @@
 </template>
 <script>
 import LoginService from "@/services/LoginService";
-import { IS_LOADING_SHOW, SIGNUP_ACTION } from "@/store/storeconstants";
-import { mapActions, mapMutations } from "vuex";
+import { SIGNUP_ACTION } from "@/store/storeconstants";
+import { mapActions } from "vuex";
 
 export default {
   data() {
@@ -30,16 +30,18 @@ export default {
         email: "",
         password: "",
       },
-      errors: [],
-      error: "",
+      errors: {},
+      pageError: "",
     };
   },
   methods: {
     ...mapActions("auth", {
       signup: SIGNUP_ACTION,
     }),
-    ...mapMutations({ isLoading: IS_LOADING_SHOW }),
+
     async goSignup() {
+      this.errors = {};
+      this.pageError = "";
       const loginService = new LoginService(this.user);
       this.errors = loginService.checkValidations();
 
@@ -47,16 +49,13 @@ export default {
         return false;
       }
 
-      //loading
-      this.isLoading(true);
       //signup regist
       await this.signup(this.user).catch((error) => {
-        this.isLoading(false);
         if (
           !error.toLowerCase().includes("password") &&
           !error.toLowerCase().includes("email")
         ) {
-          this.error = error;
+          this.pageError = error;
           return;
         }
 
@@ -67,8 +66,6 @@ export default {
           this.errors.password = error;
         }
       });
-
-      this.isLoading(false);
     },
   },
 };
