@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import UserLogin from "@/views/auth/UserLogin.vue";
 import UserSignup from "@/views/auth/UserSignup.vue";
+import Posts from "@/views/posts/Posts.vue";
 import store from "./store/store";
 
 const routes = [
@@ -12,6 +13,7 @@ const routes = [
     path: "/signup",
     component: UserSignup,
   },
+  { path: "/posts", component: Posts },
 ];
 
 const router = createRouter({
@@ -20,7 +22,7 @@ const router = createRouter({
 });
 
 router.beforeEach(() => {
-  console.log(store);
+  console.log("router.js: ", store);
 });
 
 export default router;

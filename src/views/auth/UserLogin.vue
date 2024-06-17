@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Login Page</h3>
+    <h1>Login Page</h1>
     <hr />
     <div v-if="pageError" class="alert-error">{{ pageError }}</div>
     <form @submit.prevent="goLogin()">
@@ -18,6 +18,7 @@
     </form>
     <div>
       <router-link to="/signup">go to Signup </router-link>
+      <router-link to="/posts">go to post </router-link>
     </div>
     {{ name }}
   </div>
@@ -58,25 +59,32 @@ export default {
       this.isLoading(true);
 
       //login attempt
-      await this.login(this.user).catch((error) => {
-        this.isLoading(false);
-        if (
-          !error.toLowerCase().includes("password") &&
-          !error.toLowerCase().includes("email")
-        ) {
-          this.pageError = error;
-          return;
-        }
+      await this.login(this.user)
+        .then(() => {
+          this.isLoading(false);
+          this.$router.push("/posts");
+        })
+        .catch((error) => {
+          const errorMessage = error?.response?.data?.error?.errors[0]?.message;
 
-        if (error.toLowerCase().includes("email")) {
-          this.errors.email = error;
-        }
-        if (error.toLowerCase().includes("password")) {
-          this.errors.password = error;
-        }
-      });
+          this.isLoading(false);
+          if (errorMessage) {
+            if (
+              !errorMessage.toLowerCase().includes("password") &&
+              !errorMessage.toLowerCase().includes("email")
+            ) {
+              this.pageError = error;
+              return;
+            }
 
-      this.isLoading(false);
+            if (errorMessage.toLowerCase().includes("email")) {
+              this.errors.email = error;
+            }
+            if (errorMessage.toLowerCase().includes("password")) {
+              this.errors.password = error;
+            }
+          }
+        });
     },
   },
   computed: {

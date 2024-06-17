@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3>Signup Page</h3>
+    <h1>Signup Page</h1>
     <div v-if="pageError" class="alert-error">{{ pageError }}</div>
     <form @submit.prevent="goSignup">
       <div>
@@ -15,7 +15,8 @@
       </div>
       <button type="submit">Signup</button>
     </form>
-    <router-link to="/login"> go to logis </router-link>
+    <router-link to="/login"> go to login </router-link>
+    <router-link to="/posts">go to post </router-link>
   </div>
 </template>
 <script>
@@ -51,19 +52,22 @@ export default {
 
       //signup regist
       await this.signup(this.user).catch((error) => {
-        if (
-          !error.toLowerCase().includes("password") &&
-          !error.toLowerCase().includes("email")
-        ) {
-          this.pageError = error;
-          return;
-        }
+        const errorMessage = error?.response?.data?.error?.errors[0]?.message;
+        if (errorMessage) {
+          if (
+            !errorMessage.toLowerCase().includes("password") &&
+            !errorMessage.toLowerCase().includes("email")
+          ) {
+            this.pageError = error;
+            return;
+          }
 
-        if (error.toLowerCase().includes("email")) {
-          this.errors.email = error;
-        }
-        if (error.toLowerCase().includes("password")) {
-          this.errors.password = error;
+          if (errorMessage.toLowerCase().includes("email")) {
+            this.errors.email = error;
+          }
+          if (errorMessage.toLowerCase().includes("password")) {
+            this.errors.password = error;
+          }
         }
       });
     },

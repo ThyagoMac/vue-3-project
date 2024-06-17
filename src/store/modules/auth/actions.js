@@ -32,9 +32,11 @@ export default {
 
     if (response.status === 200) {
       context.commit(SET_USER_TOKEN_DATA_MUTATION, {
-        token: response.data.token,
+        token: response.data.idToken,
         email: response.data.email,
-        userId: response.data.userId,
+        name: response.data.displayName,
+        userId: response.data.localId,
+        localId: response.data.localId,
         refreshToken: response.data.refreshToken,
         expiresIn: response.data.expiresIn,
       });

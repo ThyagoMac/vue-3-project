@@ -8,10 +8,11 @@ export default {
     return {
       token: "",
       email: "",
+      name: "testando nome vuex",
       userId: "",
+      localId: "",
       refreshToken: "",
       expiresIn: "",
-      name: "testando nome vuex",
     };
   },
   actions,
