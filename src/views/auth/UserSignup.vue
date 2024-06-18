@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h3>Signup Page</h3>
-    <div v-if="error" class="alert-error">{{ error }}</div>
+    <h1>Signup Page</h1>
+    <div v-if="pageError" class="alert-error">{{ pageError }}</div>
     <form @submit.prevent="goSignup">
       <div>
         <label for="email">Email</label>
@@ -13,9 +13,8 @@
         <input id="password" type="password" v-model.trim="user.password" />
         <div class="error" v-if="errors?.password">{{ errors?.password }}</div>
       </div>
-      <button type="submit">Login</button>
+      <button type="submit">Signup</button>
     </form>
-    <router-link to="/login"> go to logis </router-link>
   </div>
 </template>
 <script>
@@ -30,15 +29,18 @@ export default {
         email: "",
         password: "",
       },
-      errors: [],
-      error: "",
+      errors: {},
+      pageError: "",
     };
   },
   methods: {
     ...mapActions("auth", {
       signup: SIGNUP_ACTION,
     }),
-    goSignup() {
+
+    async goSignup() {
+      this.errors = {};
+      this.pageError = "";
       const loginService = new LoginService(this.user);
       this.errors = loginService.checkValidations();
 
@@ -47,17 +49,29 @@ export default {
       }
 
       //signup regist
-      this.signup(this.user).catch((error) => {
-        if (error.toLowerCase().includes("amail")) {
-          this.errors.email = error;
-          return;
-        }
-        if (error.toLowerCase().includes("aassword")) {
-          this.errors.password = error;
-          return;
-        }
-        this.error = error;
-      });
+      await this.signup(this.user)
+        .then(() => {
+          this.$router.replace("/");
+        })
+        .catch((error) => {
+          const errorMessage = error?.response?.data?.error?.errors[0]?.message;
+          if (errorMessage) {
+            if (
+              !errorMessage.toLowerCase().includes("password") &&
+              !errorMessage.toLowerCase().includes("email")
+            ) {
+              this.pageError = error;
+              return;
+            }
+
+            if (errorMessage.toLowerCase().includes("email")) {
+              this.errors.email = error;
+            }
+            if (errorMessage.toLowerCase().includes("password")) {
+              this.errors.password = error;
+            }
+          }
+        });
     },
   },
 };

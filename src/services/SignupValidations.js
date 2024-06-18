@@ -24,6 +24,21 @@ export default class SignupValidations {
 
       case "TOO_MANY_ATTEMPTS_TRY_LATER":
         return "Many attempts. Try later.";
+
+      case "EMAIL_NOT_FOUND":
+        return "Email ot found";
+
+      case "INVALID_LOGIN_CREDENTIALS":
+        return "Invalid credentials check your informations and try again";
+
+      case "INVALID_PASSWORD":
+        return "Invalid password";
+
+      case "USER_DISABLED":
+        return "User is disabled";
+
+      default:
+        return "Unexpected error. Try again";
     }
   }
 }
