@@ -13,6 +13,7 @@ export default {
       localId: "",
       refreshToken: "",
       expiresIn: "",
+      autoLogout: false,
     };
   },
   actions,

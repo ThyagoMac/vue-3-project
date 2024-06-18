@@ -26,7 +26,15 @@ export default {
   computed: {
     ...mapState({
       isLoading: (state) => state.isLoading,
+      autoLogout: (state) => state.auth.autoLogout,
     }),
+  },
+  watch: {
+    autoLogout(newVal) {
+      if (newVal) {
+        this.$router.replace("/login");
+      }
+    },
   },
 };
 </script>

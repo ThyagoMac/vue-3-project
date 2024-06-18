@@ -58,10 +58,8 @@ export default {
       //login attempt
       await this.login(this.user)
         .then(() => {
-          console.log("ppop???");
           this.isLoading(false);
           this.$router.replace("/posts");
-          console.log("ppop");
         })
         .catch((error) => {
           const errorMessage = error?.response?.data?.error?.errors[0]?.message;

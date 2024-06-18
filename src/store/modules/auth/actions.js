@@ -1,14 +1,18 @@
 import Axios from "axios";
 import {
   /* IS_LOADING_SHOW, */
-  LOGIN_ACTION,
   SET_USER_TOKEN_DATA_MUTATION,
+  SET_AUTO_LOGOUT_MUTATION,
+  LOGIN_ACTION,
   SIGNUP_ACTION,
   LOGOUT_ACTION,
   AUTH_ACTION,
   AUTO_LOGIN_ACTION,
+  AUTO_LOGOUT_ACTION,
 } from "@/store/storeconstants";
 import SignupValidations from "@/services/SignupValidations";
+
+let timer = "";
 
 export default {
   async [AUTH_ACTION](context, payload) {
@@ -31,6 +35,13 @@ export default {
     }
 
     if (response.status === 200) {
+      //const expirationTime = +10 * 1000;
+      const expirationTime = +response.data.expiresIn * 1000;
+
+      timer = setTimeout(() => {
+        context.dispatch(AUTO_LOGOUT_ACTION);
+      }, expirationTime);
+
       const userData = {
         token: response.data.idToken,
         email: response.data.email,
@@ -47,6 +58,10 @@ export default {
   },
 
   [LOGOUT_ACTION](context) {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    localStorage.removeItem("userData");
     context.commit(SET_USER_TOKEN_DATA_MUTATION, {
       token: "",
       email: "",
@@ -56,13 +71,28 @@ export default {
       refreshToken: "",
       expiresIn: "",
     });
-    localStorage.removeItem("userData");
+  },
+
+  [AUTO_LOGOUT_ACTION](context) {
+    context.dispatch(LOGOUT_ACTION);
+    context.commit(SET_AUTO_LOGOUT_MUTATION, true);
   },
 
   [AUTO_LOGIN_ACTION](context) {
-    const userData = localStorage.getItem("userData");
+    const userData = JSON.parse(localStorage.getItem("userData"));
+
     if (userData) {
-      context.commit(SET_USER_TOKEN_DATA_MUTATION, JSON.parse(userData));
+      const expirationTime = userData.expiresIn - new Date().getTime();
+
+      if (expirationTime < 10000) {
+        //get refresh token or auto logout
+        context.dispatch(AUTO_LOGOUT_ACTION);
+      } else {
+        timer = setTimeout(() => {
+          context.dispatch(AUTO_LOGOUT_ACTION);
+        }, expirationTime);
+      }
+      context.commit(SET_USER_TOKEN_DATA_MUTATION, userData);
     }
   },
 
