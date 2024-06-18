@@ -22,7 +22,6 @@ export default {
     axiosInstance
       .get(`https://auth-rest-api-tmcl-default-rtdb.firebaseio.com/posts.json`)
       .then((response) => {
-        console.log(response.data);
         this.posts = response.data;
         this.isLoading(false);
       })

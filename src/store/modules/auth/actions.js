@@ -1,15 +1,17 @@
 import Axios from "axios";
 import {
+  /* IS_LOADING_SHOW, */
   LOGIN_ACTION,
-  IS_LOADING_SHOW,
   SET_USER_TOKEN_DATA_MUTATION,
   SIGNUP_ACTION,
   LOGOUT_ACTION,
+  AUTH_ACTION,
+  AUTO_LOGIN_ACTION,
 } from "@/store/storeconstants";
 import SignupValidations from "@/services/SignupValidations";
 
 export default {
-  async [LOGIN_ACTION](context, payload) {
+  async [AUTH_ACTION](context, payload) {
     const data = {
       email: payload.email,
       password: payload.password,
@@ -19,10 +21,7 @@ export default {
     /* OBS: LOGIN_ACTION func is controlling the loading system on the page */
     let response = "";
     try {
-      response = await Axios.post(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCEhNP2W95lYturJG4pttBp6UYetEkOuow",
-        data
-      );
+      response = await Axios.post(payload.url, data);
     } catch (error) {
       const errorMessage = SignupValidations.getErrorsMessage(
         error.response.data.error.errors[0].message
@@ -32,7 +31,7 @@ export default {
     }
 
     if (response.status === 200) {
-      context.commit(SET_USER_TOKEN_DATA_MUTATION, {
+      const userData = {
         token: response.data.idToken,
         email: response.data.email,
         name: response.data.displayName,
@@ -40,7 +39,10 @@ export default {
         localId: response.data.localId,
         refreshToken: response.data.refreshToken,
         expiresIn: response.data.expiresIn,
-      });
+      };
+
+      localStorage.setItem("userData", JSON.stringify(userData));
+      context.commit(SET_USER_TOKEN_DATA_MUTATION, userData);
     }
   },
 
@@ -54,22 +56,43 @@ export default {
       refreshToken: "",
       expiresIn: "",
     });
+    localStorage.removeItem("userData");
+  },
+
+  [AUTO_LOGIN_ACTION](context) {
+    const userData = localStorage.getItem("userData");
+    if (userData) {
+      context.commit(SET_USER_TOKEN_DATA_MUTATION, JSON.parse(userData));
+    }
+  },
+
+  async [LOGIN_ACTION](context, payload) {
+    return context.dispatch(AUTH_ACTION, {
+      ...payload,
+      url: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCEhNP2W95lYturJG4pttBp6UYetEkOuow",
+    });
   },
 
   async [SIGNUP_ACTION](context, payload) {
+    return context.dispatch(AUTH_ACTION, {
+      ...payload,
+      url: "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCEhNP2W95lYturJG4pttBp6UYetEkOuow",
+    });
+
+    /* 
     const data = {
       email: payload.email,
       password: payload.password,
       returnSecureToken: true,
     };
 
-    /* OBS: SIGNUP_ACTION func is controlling the loading system on the actions.js (here) */
+    //OBS: SIGNUP_ACTION func is controlling the loading system on the actions.js (here) 
     context.commit(IS_LOADING_SHOW, true, { root: true });
 
     let response = "";
     try {
       response = await Axios.post(
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCEhNP2W95lYturJG4pttBp6UYetEkOuow",
+        ,
         data
       );
     } catch (error) {
@@ -90,5 +113,6 @@ export default {
         expiresIn: response.data.expiresIn,
       });
     }
+    */
   },
 };

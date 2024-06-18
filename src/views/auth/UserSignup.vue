@@ -49,25 +49,29 @@ export default {
       }
 
       //signup regist
-      await this.signup(this.user).catch((error) => {
-        const errorMessage = error?.response?.data?.error?.errors[0]?.message;
-        if (errorMessage) {
-          if (
-            !errorMessage.toLowerCase().includes("password") &&
-            !errorMessage.toLowerCase().includes("email")
-          ) {
-            this.pageError = error;
-            return;
-          }
+      await this.signup(this.user)
+        .then(() => {
+          this.$router.replace("/");
+        })
+        .catch((error) => {
+          const errorMessage = error?.response?.data?.error?.errors[0]?.message;
+          if (errorMessage) {
+            if (
+              !errorMessage.toLowerCase().includes("password") &&
+              !errorMessage.toLowerCase().includes("email")
+            ) {
+              this.pageError = error;
+              return;
+            }
 
-          if (errorMessage.toLowerCase().includes("email")) {
-            this.errors.email = error;
+            if (errorMessage.toLowerCase().includes("email")) {
+              this.errors.email = error;
+            }
+            if (errorMessage.toLowerCase().includes("password")) {
+              this.errors.password = error;
+            }
           }
-          if (errorMessage.toLowerCase().includes("password")) {
-            this.errors.password = error;
-          }
-        }
-      });
+        });
     },
   },
 };

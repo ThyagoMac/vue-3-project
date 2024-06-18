@@ -13,11 +13,15 @@
 import LoaderSpin from "@/components/icons/LoaderSpin.vue";
 import MyNav from "@/components/nav/MyNav.vue";
 import { mapState } from "vuex";
+import { AUTO_LOGIN_ACTION } from "./store/storeconstants";
 export default {
   name: "App",
   components: {
     LoaderSpin,
     MyNav,
+  },
+  created() {
+    this.$store.dispatch(`auth/${AUTO_LOGIN_ACTION}`);
   },
   computed: {
     ...mapState({
