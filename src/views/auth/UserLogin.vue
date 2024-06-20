@@ -3,7 +3,7 @@
     <h1>Login Page</h1>
     <hr />
     <div v-if="pageError" class="alert-error">{{ pageError }}</div>
-    <form @submit.prevent="goLogin()">
+    <form @submit.prevent="onLogin()">
       <div>
         <label for="email">Email</label>
         <input id="email" type="text" v-model.trim="user.email" />
@@ -42,7 +42,7 @@ export default {
     }),
     ...mapMutations({ isLoading: IS_LOADING_SHOW }),
 
-    async goLogin() {
+    async onLogin() {
       this.errors = {};
       this.pageError = "";
       const loginService = new LoginService(this.user);

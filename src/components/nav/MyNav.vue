@@ -3,6 +3,7 @@
     NAV
     <router-link v-if="isUserAuth" to="/">| Home | </router-link>
     <router-link v-if="isUserAuth" to="/posts">Post | </router-link>
+    <router-link v-if="isUserAuth" to="/todos"> Todos | </router-link>
     <router-link v-if="!isUserAuth" to="/login"> Login | </router-link>
     <router-link v-if="!isUserAuth" to="/signup">Signup | </router-link>
 
