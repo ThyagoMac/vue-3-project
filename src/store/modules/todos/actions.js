@@ -2,7 +2,9 @@ import axios from "axios";
 
 export default {
   getTodos({ commit }) {
+    console.log("caiu aqui");
     return axios.get("http://localhost:3000/todos").then((response) => {
+      console.log("set todo: ", response.data);
       commit("setTodos", response.data);
     });
   },
