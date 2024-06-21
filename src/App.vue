@@ -5,7 +5,7 @@
       <LoaderSpin />
     </div>
     <MyNav />
-    <router-view v-show="!isLoading" />
+    <router-view class="container mx-auto px-4" v-show="!isLoading" />
   </div>
 </template>
 
