@@ -36,7 +36,7 @@ export default {
 
     if (response.status === 200) {
       //const expirationTime = +10 * 1000;
-      const expirationTime = +1000 * 10000;
+      const expirationTime = +response.data.expiresIn * 10000;
 
       timer = setTimeout(() => {
         context.dispatch(AUTO_LOGOUT_ACTION);
